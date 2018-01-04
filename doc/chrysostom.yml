@@ -1,0 +1,11 @@
+---
+main:
+  port: 8880
+  ssl-port: 8443
+  interval: 30
+  keystore: doc/keystore
+  key-password: password
+  hmac-secret: doc/hmac-secret
+  module_dir: /home/thawes/src/projects/custommodule/target/uberjar/
+  logfile: /home/thawes/programs/var/ancillary.log
+  loglevel: DEBUG

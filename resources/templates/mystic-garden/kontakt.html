@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Mystic Garden - Kontakt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<script language="JavaScript1.2" src="javascript.js" type="text/javascript"></script>
+<link href="styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="container">
+  <div id="kopf"> </div>
+  <div id="menue"> <a href="#" class="mp1">&raquo; Home</a> <a href="uebermich.php" class="mp">&raquo; &Uuml;ber mich</a> <a href="bildergalerie.php" class="mp">&raquo; Bildergalerie</a> <a href="gaestebuch.php" class="mp">&raquo; G&auml;stebuch</a> <a href="links.php" class="mp">&raquo; Links</a> <a href="kontakt.php" class="mp">&raquo; Kontakt</a> <a href="impressum.php" class="mp">&raquo; Impressum</a> </div>
+  <div id="contentkopf"> </div>
+  <div id="content">
+    <div id="sidebar">
+      <h2>&raquo; Aktuelles</h2>
+      <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+      <p>Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
+      <h2>&raquo; Partnerseiten</h2>
+      <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+      <p align="center"><a href="http://validator.w3.org/check?uri=referer"><img border="0" src="http://www.w3.org/Icons/valid-html401" alt="Valid HTML 4.01!" height="31" width="88" /></a> <a href="http://jigsaw.w3.org/css-validator/check/referer"><img style="border:0;width:88px;height:31px" src="http://jigsaw.w3.org/css-validator/images/vcss" alt="Valid CSS!" /></a></p>
+    </div>
+    <div id="inhalt">
+      <h1>&raquo; Kontakt</h1>
+      <p>Hier ein Beispiel für ein Kontaktformular. Ergänzen Sie dieses einfach durch Ihre eigenen Texte und Felder. Die Formatierung der Beschriftung und Felder erfolgt auch hier wieder mittels css (Cascading Style Sheets). Mit Hilfe eines Javascripts wird überprüft, ob das Formular vollständig ausgefüllt wurde (alle Pflichtfelder müssen ausgefüllt werden und e-Mail muss zusätzlich ein korrekte e-Mail Adresse enthalten).</p>
+      <p>Wurde alles korrekt ausgefüllt, wird die php-Datei kontakt-danke.php aufgerufen. Diese können Sie durch Ihre eigenen Texte ergänzen. Des weiteren sollten Sie hier Ihre Empfänger e-Mail Adresse eintragen.</p>
+      <center>
+        <form action="#" method="post" name="kontaktform" id="kontaktform" onsubmit="MM_validateForm('Name','','R','eMail','','RisEmail','Anfrage','','R');return document.MM_returnValue">
+          <div class="beschriftung">* Anrede:</div>
+          <select name="Anrede" id="Anrede">
+            <option value="Herr" selected="selected">Herr</option>
+            <option value="Frau">Frau</option>
+          </select>
+          <br />
+          <div class="beschriftung">* Name:</div>
+          <input name="Name" type="text" id="Name" size="41" />
+          <br />
+          <div class="beschriftung">Telefon:</div>
+          <input name="Telefon" type="text" id="Telefon" size="41" />
+          <br />
+          <div class="beschriftung">* e-Mail:</div>
+          <input name="eMail" type="text" id="eMail" size="41" />
+          <br />
+          <div class="beschriftung">* Ihre Anfrage:</div>
+          <textarea name="Anfrage" cols="38" rows="10" id="Anfrage"></textarea>
+          <br />
+          <div class="beschriftung">&nbsp;</div>
+          <input class="submit" type="submit" name="Submit" value="&raquo; Versenden" />
+          <input class="reset" type="reset" name="Reset" value="&raquo; Felder leeren" />
+        </form>
+      </center>
+    </div>
+  </div>
+  <div id="fuss"> Design by <a href="http://www.hpvorlagen24.de">www.hpvorlagen24.de</a> copyright &copy; 2005 </div>
+</div>
+</body>
+</html>

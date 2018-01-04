@@ -1,7 +1,16 @@
 (ns chrysostom.core
+  (:require
+   [ring.adapter.jetty :as jetty]
+   [chrysostom.config :as config]
+   [chrysostom.handler :as handler])
   (:gen-class))
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Starts the web server."
   [& args]
-  (println "Hello, World!"))
+  (let [conf (:main (config/read-config))]
+    (defonce server (jetty/run-jetty
+                     #'handler/app
+                     {:port (:port conf)
+                      :send-server-version? false
+                      :join? false}))))
