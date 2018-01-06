@@ -9,7 +9,8 @@
                  [ring/ring-defaults "0.3.1"]
                  [bidi "2.1.2"]
                  [enlive "1.1.6"]
-                 [stasis "2.3.0"]]
+                 [stasis "2.3.0"]
+                 [hiccup "1.0.5"]]
   :main ^:skip-aot chrysostom.core
   :target-path "target/%s"
   :ring {:handler chrysostom.handler/app}

@@ -4,23 +4,27 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.resource :refer [wrap-resource]]
             [net.cgrand.enlive-html :as html]
-            [stasis.core :as stasis]
             [chrysostom.static.web :as chrysweb]))
 
-  (def template "templates/walls")
+(def template "templates/walls")
 
 (html/deftemplate main-template (str template "/template.html")
-  [])
+  [ctxt]
+  [:div#sidebar] (html/content (:sidebar ctxt)))
 
 (defn index-handler
   [request]
   {:status 200
    :headers {"Content-type" "text/html"}
-   :body (main-template)})
+   :body (main-template {:sidebar "Greetings visitor!"})})
 
 (def app-routes
   ["/" [["" index-handler]
-        ["index.html" index-handler]]])
+        ["index.html" index-handler]
+        ["about"
+         [["" chrysweb/about-page]
+          ["/" chrysweb/about-page]
+          ["/index.html" chrysweb/about-page]]]]])
 
 (def app
   (->
