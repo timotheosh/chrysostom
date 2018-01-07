@@ -1,12 +1,12 @@
 (ns chrysostom.handler
-  (:require [bidi.ring :refer (make-handler)]
-            [ring.util.response :as res]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [ring.middleware.resource :refer [wrap-resource]]
-            [liberator.core :refer [resource defresource]]
-            [liberator.representation :refer [ring-response]]
+  (:require [bidi.ring :refer [make-handler]]
+            [chrysostom.static :as static]
             [chrysostom.templates :as tmpl]
-            [chrysostom.static.web :as chrysweb]))
+            [liberator.core :refer [defresource resource]]
+            [liberator.representation :refer [ring-response]]
+            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+            [ring.middleware.resource :refer [wrap-resource]]
+            [ring.util.response :as res]))
 
 "Liberator library makes things easier when we just need to send the
 content of arbitrary files. We just need it to send us a handler.
@@ -38,8 +38,8 @@ there are other things I can use from the lib."
 
 (defn generate-routes
   []
-   (let [rts (chrysostom.static.web/get-partials)]
-     ["/" (into chrysostom.handler/app-routes (map #(gen-route %) rts))]))
+   (let [rts (static/get-partials)]
+     ["/" (into app-routes (map #(gen-route %) rts))]))
 
 (def app
   (wrap-defaults
