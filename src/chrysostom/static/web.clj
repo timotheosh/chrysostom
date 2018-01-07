@@ -2,19 +2,11 @@
   (:require
    [clojure.java.io :as io]
    [stasis.core :as stasis]
-   [hiccup.page :refer [html5]]))
+   [chrysostom.templates :as tmpl]))
 
-(defn layout-page [page]
-  (html5
-   [:head
-    [:meta {:charset "utf-8"}]
-    [:meta {:name "viewport"
-            :content "width=device-width, initial-scale=1.0"}]
-    [:title "Tech blog"]
-    [:link {:rel "stylesheet" :href "/styles/styles.css"}]]
-   [:body
-    [:div.logo "chrysostom web platform"]
-    [:div.body page]]))
+(defn layout-page
+  [page]
+  (tmpl/main-template {:text page}))
 
 (defn partial-pages
   [pages]
@@ -24,7 +16,11 @@
 (defn about-page [request]
   {:status 200
    :headers {"Content-type" "text/html"}
-   :body (layout-page (slurp (io/resource "partials/about.html")))})
+   :body (tmpl/main-template {:text (slurp (io/resource "partials/about.html"))})})
+
+(defn get-partials []
+  (partial-pages
+   (stasis/slurp-directory "resources/partials" #".*\.html$")))
 
 (defn get-pages []
   (stasis/merge-page-sources

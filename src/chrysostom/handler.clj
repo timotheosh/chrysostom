@@ -3,33 +3,45 @@
             [ring.util.response :as res]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.middleware.resource :refer [wrap-resource]]
-            [net.cgrand.enlive-html :as html]
+            [liberator.core :refer [resource defresource]]
+            [liberator.representation :refer [ring-response]]
+            [chrysostom.templates :as tmpl]
             [chrysostom.static.web :as chrysweb]))
 
-(def template "templates/walls")
-
-(html/deftemplate main-template (str template "/template.html")
-  [ctxt]
-  [:div#sidebar] (html/content (:sidebar ctxt)))
+"Liberator library makes things easier when we just need to send the
+content of arbitrary files. We just need it to send us a handler.
+TODO: Write my own macro in liberator's place. Unless, of course,
+there are other things I can use from the lib."
+(defresource send-page [page]
+  :allowed-methods [:get]
+  :available-media-types ["text/html"]
+  :handle-ok page)
 
 (defn index-handler
   [request]
   {:status 200
    :headers {"Content-type" "text/html"}
-   :body (main-template {:sidebar "Greetings visitor!"})})
+   :body (tmpl/main-template {:sidebar "Greetings visitor!"})})
+
+(defn gen-route
+  "Returns a rout that bidi can use."
+  [route]
+  [(let [path (first route)]
+     (if [(= (subs path 0 1) "/")]
+       (clojure.string/replace-first path "/" "")
+       path))
+   (let [page (clojure.string/join (second route))]
+     (send-page page))])
 
 (def app-routes
-  ["/" [["" index-handler]
-        ["index.html" index-handler]
-        ["about"
-         [["" chrysweb/about-page]
-          ["/" chrysweb/about-page]
-          ["/index.html" chrysweb/about-page]]]]])
+  [[""  index-handler]])
+
+(defn generate-routes
+  []
+   (let [rts (chrysostom.static.web/get-partials)]
+     ["/" (into chrysostom.handler/app-routes (map #(gen-route %) rts))]))
 
 (def app
-  (->
-   (make-handler app-routes)
-   (wrap-defaults
-    site-defaults)
-   (wrap-resource
-    (chrysweb/get-pages))))
+  (wrap-defaults
+   (make-handler (generate-routes))
+   site-defaults))
