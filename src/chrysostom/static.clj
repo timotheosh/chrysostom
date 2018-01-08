@@ -21,9 +21,3 @@
 (defn get-partials []
   (partial-pages
    (stasis/slurp-directory "resources/partials" #".*\.html$")))
-
-(defn get-pages []
-  (stasis/merge-page-sources
-   {:public (stasis/slurp-directory "resources/public" #".*\.(html|css|js)$")
-    :partials (partial-pages
-               (stasis/slurp-directory "resources/partials" #".*\.html$"))}))
