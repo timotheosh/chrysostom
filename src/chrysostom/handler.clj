@@ -38,7 +38,7 @@ there are other things I can use from the lib."
 
 (defn generate-routes
   []
-   (let [rts (static/get-partials)]
+   (let [rts (static/get-static-pages)]
      ["/" (into app-routes (map #(gen-route %) rts))]))
 
 (def app

@@ -10,7 +10,9 @@
                  [bidi "2.1.2"]
                  [liberator "0.15.1"]
                  [enlive "1.1.6"]
-                 [stasis "2.3.0"]]
+                 [stasis "2.3.0"]
+                 [hiccup "1.0.5"]
+                 [clj-org "0.0.2"]]
   :main ^:skip-aot chrysostom.core
   :target-path "target/%s"
   :ring {:handler chrysostom.handler/app}
