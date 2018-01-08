@@ -6,5 +6,5 @@
 
 (html/deftemplate main-template (str template "/template.html")
   [ctxt]
-  [:div#sidebar] (html/content (:sidebar ctxt))
-  [:div#text] (html/content (:text ctxt)))
+  [:div#sidebar] (html/html-content (:sidebar ctxt))
+  [:div#text] (html/html-content (:text ctxt)))
