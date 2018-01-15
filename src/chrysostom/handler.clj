@@ -23,6 +23,9 @@ there are other things I can use from the lib."
    :headers {"Content-type" "text/html"}
    :body (tmpl/main-template {:sidebar "Greetings visitor!"})})
 
+(def app-routes
+  [[""  index-handler]])
+
 (defn gen-route
   "Returns a rout that bidi can use."
   [route]
@@ -32,9 +35,6 @@ there are other things I can use from the lib."
        path))
    (let [page (clojure.string/join (second route))]
      (send-page page))])
-
-(def app-routes
-  [[""  index-handler]])
 
 (defn generate-routes
   []

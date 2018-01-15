@@ -4,6 +4,7 @@
    [stasis.core :as stasis]
    [hiccup.core :as hiccup]
    [clj-org.org :refer [parse-org]]
+   [me.raynes.cegdown :as md]
    [chrysostom.templates :as tmpl]))
 
 (defn layout-page
@@ -26,6 +27,10 @@
   (zipmap (map #(clojure.string/replace % #"\.org$" ".html") (keys pages))
           (map layout-org-file (vals pages))))
 
+(defn markdown-pages [pages]
+  (zipmap (map #(clojure.string/replace % #"\.md$" "") (keys pages))
+          (map #(layout-page (md/to-html %)) (vals pages))))
+
 (defn about-page [request]
   {:status 200
    :headers {"Content-type" "text/html"}
@@ -39,7 +44,12 @@
   (org-mode-pages
    (stasis/slurp-directory "resources/org-files" #".*\.org$")))
 
+(defn get-markdown-files []
+  (markdown-pages
+   (stasis/slurp-directory "resources/md" #"\.md$")))
+
 (defn get-static-pages []
   (stasis/merge-page-sources
    {:partials (get-partials)
-    :orgfiles (get-org-files)}))
+    :orgfiles (get-org-files)
+    :markdown (get-markdown-files)}))
