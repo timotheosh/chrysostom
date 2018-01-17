@@ -4,18 +4,20 @@
    [stasis.core :as stasis]
    [hiccup.core :as hiccup]
    [clj-org.org :refer [parse-org]]
+   [chrysostom.highlight :refer [highlight-code-blocks]]
    [me.raynes.cegdown :as md]
    [chrysostom.templates :as tmpl]))
 
 (defn layout-page
   [page]
-  (tmpl/main-template {:text page}))
+  (clojure.string/join (tmpl/main-template {:text page})))
 
 (defn layout-org-file
   [file]
-  (tmpl/main-template
-   {:text
-    (hiccup/html (:content (parse-org file)))}))
+  (clojure.string/join
+   (tmpl/main-template
+    {:text
+     (hiccup/html (:content (parse-org file)))})))
 
 (defn partial-pages
   [pages]
@@ -27,9 +29,17 @@
   (zipmap (map #(clojure.string/replace % #"\.org$" ".html") (keys pages))
           (map layout-org-file (vals pages))))
 
+;; Functions for handling markdown
+(def pegdown-options ;; https://github.com/sirthias/pegdown
+  [:autolinks :fenced-code-blocks :strikethrough])
+
+(defn render-markdown-page [page]
+  (layout-page (md/to-html page pegdown-options)))
+
 (defn markdown-pages [pages]
   (zipmap (map #(clojure.string/replace % #"\.md$" "") (keys pages))
-          (map #(layout-page (md/to-html %)) (vals pages))))
+          (map render-markdown-page (vals pages))))
+;; end: Markdown functions
 
 (defn about-page [request]
   {:status 200
@@ -48,8 +58,18 @@
   (markdown-pages
    (stasis/slurp-directory "resources/md" #"\.md$")))
 
-(defn get-static-pages []
+;; For handling code highlighting
+(defn get-raw-pages []
   (stasis/merge-page-sources
-   {:partials (get-partials)
+   {:public (stasis/slurp-directory "resources/public" #".*\.(html|css|js)$")
+    :partials (get-partials)
     :orgfiles (get-org-files)
     :markdown (get-markdown-files)}))
+
+(defn prepare-pages [pages]
+  (zipmap (keys pages)
+          (map #(highlight-code-blocks %) (vals pages))))
+
+(defn get-static-pages []
+  (prepare-pages (get-raw-pages)))
+;; end: code highlighting

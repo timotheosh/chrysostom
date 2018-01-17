@@ -6,6 +6,8 @@
 # Vi(m) artifacts
 *.swp
 
+pygments-css
+
 # Clojure/Java artifacts
 pom.xml
 pom.xml.asc

@@ -26,20 +26,19 @@ there are other things I can use from the lib."
 (def app-routes
   [[""  index-handler]])
 
-(defn gen-route
-  "Returns a rout that bidi can use."
+(defn- gen-route
   [route]
+  "Returns a route that bidi can use."
   [(let [path (first route)]
-     (if [(= (subs path 0 1) "/")]
-       (clojure.string/replace-first path "/" "")
+     (if [(.startsWith path "/")]
+       (subs path 1)
        path))
-   (let [page (clojure.string/join (second route))]
+   (let [page (second route)]
      (send-page page))])
 
 (defn generate-routes
   []
-   (let [rts (static/get-static-pages)]
-     ["/" (into app-routes (map #(gen-route %) rts))]))
+  ["/" (into app-routes (map #(gen-route %) (static/get-static-pages)))])
 
 (def app
   (wrap-defaults
