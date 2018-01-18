@@ -1,5 +1,9 @@
 (ns chrysostom.handler
-  (:require [bidi.ring :refer [make-handler]]
+  (:require [optimus.assets :as assets]
+            [optimus.optimizations :as optimizations]
+            [optimus.prime :as optimus]
+            [optimus.strategies :refer [serve-live-assets]]
+            [bidi.ring :refer [make-handler]]
             [chrysostom.static :as static]
             [chrysostom.templates :as tmpl]
             [liberator.core :refer [defresource resource]]
@@ -19,12 +23,10 @@ there are other things I can use from the lib."
 
 (defn index-handler
   [request]
-  {:status 200
-   :headers {"Content-type" "text/html"}
-   :body (tmpl/main-template {:sidebar "Greetings visitor!"})})
+  (static/layout-page request "Greetings!"))
 
 (def app-routes
-  [[""  index-handler]])
+  [[""  (send-page index-handler)]])
 
 (defn- gen-route
   [route]
@@ -40,7 +42,14 @@ there are other things I can use from the lib."
   []
   ["/" (into app-routes (map #(gen-route %) (static/get-static-pages)))])
 
+(defn get-assets []
+  (assets/load-assets "public" [#".*"]))
+
 (def app
   (wrap-defaults
-   (make-handler (generate-routes))
-   site-defaults))
+   (optimus/wrap
+    (make-handler (generate-routes))
+    get-assets
+    optimizations/all
+    serve-live-assets)
+   (assoc site-defaults :static false)))

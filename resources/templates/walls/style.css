@@ -1,3 +1,4 @@
+import url(../pygments-css/autumn.css);
 html {background:url(images/body_bckg.jpg) center repeat-y #1f0100;}
 body {margin:0; font-size:15px; line-height:18px; font-family:"Times New Roman", Times, serif; background:url(images/head_bckg.jpg) repeat-x; padding-top:80px;}
 a {color:#775b30;}

@@ -2,7 +2,7 @@
   (:require [net.cgrand.enlive-html :as html])
   (:gen-class))
 
-  (def template "templates/walls")
+(def template "templates/walls")
 
 (html/deftemplate main-template (str template "/template.html")
   [ctxt]

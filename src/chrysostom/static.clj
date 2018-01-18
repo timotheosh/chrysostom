@@ -1,50 +1,49 @@
 (ns chrysostom.static
-  (:require
-   [clojure.java.io :as io]
-   [stasis.core :as stasis]
-   [hiccup.core :as hiccup]
-   [clj-org.org :refer [parse-org]]
-   [chrysostom.highlight :refer [highlight-code-blocks]]
-   [me.raynes.cegdown :as md]
-   [chrysostom.templates :as tmpl]))
+  (:require [optimus.link :as link]
+            [clojure.java.io :as io]
+            [stasis.core :as stasis]
+            [hiccup.core :as hiccup]
+            [clj-org.org :refer [parse-org]]
+            [chrysostom.highlight :refer [highlight-code-blocks]]
+            [me.raynes.cegdown :as md]
+            [chrysostom.templates :as tmpl]))
 
 (defn layout-page
-  [page]
-  (clojure.string/join (tmpl/main-template {:text page})))
+  [request page]
+  (clojure.string/join (tmpl/main-template
+                        {:stylesheet (link/file-path request "/styles/main.css")
+                         :text page})))
 
 (defn layout-org-file
-  [file]
+  [request file]
   (clojure.string/join
    (tmpl/main-template
+    request
     {:text
      (hiccup/html (:content (parse-org file)))})))
 
 (defn partial-pages
   [pages]
   (zipmap (keys pages)
-          (map layout-page (vals pages))))
+          (map #(fn [req] (layout-page req %)) (vals pages))))
 
 (defn org-mode-pages
   [pages]
   (zipmap (map #(clojure.string/replace % #"\.org$" ".html") (keys pages))
-          (map layout-org-file (vals pages))))
+          (map #(fn [req] (layout-org-file req %)) (vals pages))))
 
 ;; Functions for handling markdown
 (def pegdown-options ;; https://github.com/sirthias/pegdown
   [:autolinks :fenced-code-blocks :strikethrough])
 
-(defn render-markdown-page [page]
-  (layout-page (md/to-html page pegdown-options)))
+;;(defn render-markdown-page [page]
+;;(layout-page (md/to-html page pegdown-options)))
 
 (defn markdown-pages [pages]
   (zipmap (map #(clojure.string/replace % #"\.md$" "") (keys pages))
-          (map render-markdown-page (vals pages))))
+          (map #(fn [req] (layout-page req (md/to-html % pegdown-options)))
+               (vals pages))))
 ;; end: Markdown functions
-
-(defn about-page [request]
-  {:status 200
-   :headers {"Content-type" "text/html"}
-   :body (tmpl/main-template {:text (slurp (io/resource "partials/about.html"))})})
 
 (defn get-partials []
   (partial-pages
@@ -66,9 +65,13 @@
     :orgfiles (get-org-files)
     :markdown (get-markdown-files)}))
 
+(defn prepare-page [page req]
+  (-> (if (string? page) page (page req))
+      highlight-code-blocks))
+
 (defn prepare-pages [pages]
   (zipmap (keys pages)
-          (map #(highlight-code-blocks %) (vals pages))))
+          (map #(partial prepare-page %) (vals pages))))
 
 (defn get-static-pages []
   (prepare-pages (get-raw-pages)))
