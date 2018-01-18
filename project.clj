@@ -18,7 +18,10 @@
                  [optimus "0.20.1"]]
   :main ^:skip-aot chrysostom.core
   :target-path "target/%s"
-  :ring {:handler chrysostom.handler/app}
+  :ring {:port 8880
+         :handler chrysostom.handler/app
+         :auto-reload? true
+         :auto-refresh? true}
   :profiles {
              :uberjar {:aot :all}
-             :dev {:plugins [[lein-ring "0.8.10"]]}})
+             :dev {:plugins [[lein-ring "0.12.3"]]}})

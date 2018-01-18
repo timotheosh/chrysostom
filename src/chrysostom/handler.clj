@@ -23,7 +23,7 @@ there are other things I can use from the lib."
 
 (defn index-handler
   [request]
-  (static/layout-page request "Greetings!"))
+  (static/layout-page request "Welcome to Chrysostom!"))
 
 (def app-routes
   [[""  (send-page index-handler)]])

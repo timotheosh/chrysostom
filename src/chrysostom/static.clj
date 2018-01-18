@@ -5,8 +5,24 @@
             [hiccup.core :as hiccup]
             [clj-org.org :refer [parse-org]]
             [chrysostom.highlight :refer [highlight-code-blocks]]
+            [chrysostom.config :as config]
             [me.raynes.cegdown :as md]
             [chrysostom.templates :as tmpl]))
+
+(defn- get-file-path
+  "doctype will be one of
+     :public
+     :markdown
+     :org-files
+     :partials"
+  [doctype]
+  (let [conf (:documents (config/read-config))]
+    (or (get conf doctype)
+        (cond (= doctype :markdown) "resources/md"
+              (= doctype :org-files) "resources/org-files"
+              (= doctype :partials) "resources/partials"
+              (= doctype :public) "resources/public"
+              :else nil))))
 
 (defn layout-page
   [request page]
@@ -18,7 +34,6 @@
   [request file]
   (clojure.string/join
    (tmpl/main-template
-    request
     {:text
      (hiccup/html (:content (parse-org file)))})))
 
@@ -47,20 +62,20 @@
 
 (defn get-partials []
   (partial-pages
-   (stasis/slurp-directory "resources/partials" #".*\.html$")))
+   (stasis/slurp-directory (get-file-path :partials) #".*\.html$")))
 
 (defn get-org-files []
   (org-mode-pages
-   (stasis/slurp-directory "resources/org-files" #".*\.org$")))
+   (stasis/slurp-directory (get-file-path :org-files) #".*\.org$")))
 
 (defn get-markdown-files []
   (markdown-pages
-   (stasis/slurp-directory "resources/md" #"\.md$")))
+   (stasis/slurp-directory (get-file-path :markdown) #"\.md$")))
 
 ;; For handling code highlighting
 (defn get-raw-pages []
   (stasis/merge-page-sources
-   {:public (stasis/slurp-directory "resources/public" #".*\.(html|css|js)$")
+   {:public (stasis/slurp-directory (get-file-path :public) #".*\.(html|css|js)$")
     :partials (get-partials)
     :orgfiles (get-org-files)
     :markdown (get-markdown-files)}))

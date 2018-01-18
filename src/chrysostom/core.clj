@@ -11,6 +11,6 @@
   (let [conf (:main (config/read-config))]
     (defonce server (jetty/run-jetty
                      #'handler/app
-                     {:port (:port conf)
+                     {:port 8880
                       :send-server-version? false
                       :join? false}))))
