@@ -20,8 +20,7 @@
   :target-path "target/%s"
   :ring {:port 8880
          :handler chrysostom.handler/app
-         :auto-reload? true
-         :auto-refresh? true}
+         :auto-reload? true}
   :profiles {
              :uberjar {:aot :all}
              :dev {:plugins [[lein-ring "0.12.3"]]}})
