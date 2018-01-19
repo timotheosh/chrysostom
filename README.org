@@ -9,6 +9,6 @@ Personal web application for generating and managing a semi-static website.
    2. Support for serving org-mode files using [[https://github.com/eigenhombre/clj-org][clj-org]]
    3. Routing system using [[https://github.com/juxt/bidi][bidi]]
 ** TODOS
-*** TODO Add support for serving Markdown files.
+*** TODO Add support for serving blog entries and static pages.
 *** TODO Add support for for my [[https://github.com/timotheosh/cljsword][cljsword]] library, using reference tags in web documents.
 *** Possibly use this as a Bible reference platform.
