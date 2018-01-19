@@ -1,13 +1,13 @@
 (ns chrysostom.handler
-  (:require [optimus.assets :as assets]
+  (:require [bidi.ring :refer [make-handler]]
+            [chrysostom.templates :as tmpl]
+            [chrysostom.web :as web]
+            [liberator.core :refer [defresource resource]]
+            [liberator.representation :refer [ring-response]]
+            [optimus.assets :as assets]
             [optimus.optimizations :as optimizations]
             [optimus.prime :as optimus]
             [optimus.strategies :refer [serve-live-assets]]
-            [bidi.ring :refer [make-handler]]
-            [chrysostom.static :as static]
-            [chrysostom.templates :as tmpl]
-            [liberator.core :refer [defresource resource]]
-            [liberator.representation :refer [ring-response]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.util.response :as res]))
@@ -23,7 +23,7 @@ there are other things I can use from the lib."
 
 (defn index-handler
   [request]
-  (static/layout-page request "Welcome to Chrysostom!"))
+  (web/layout-page request "Welcome to Chrysostom!"))
 
 (def app-routes
   [[""  (send-page index-handler)]])
@@ -40,7 +40,7 @@ there are other things I can use from the lib."
 
 (defn generate-routes
   []
-  ["/" (into app-routes (map #(gen-route %) (static/get-static-pages)))])
+  ["/" (into app-routes (map #(gen-route %) (web/get-static-pages)))])
 
 (defn get-assets []
   (assets/load-assets "public" [#".*"]))

@@ -1,4 +1,4 @@
-(ns chrysostom.static
+(ns chrysostom.web
   (:require [optimus.link :as link]
             [clojure.java.io :as io]
             [stasis.core :as stasis]
