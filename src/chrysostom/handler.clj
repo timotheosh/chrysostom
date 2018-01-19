@@ -4,7 +4,6 @@
             [chrysostom.web :as web]
             [liberator.core :refer [defresource resource]]
             [liberator.representation :refer [ring-response]]
-            [optimus.assets :as assets]
             [optimus.optimizations :as optimizations]
             [optimus.prime :as optimus]
             [optimus.strategies :refer [serve-live-assets]]
@@ -42,14 +41,11 @@ there are other things I can use from the lib."
   []
   ["/" (into app-routes (map #(gen-route %) (web/get-static-pages)))])
 
-(defn get-assets []
-  (assets/load-assets "public" [#".*"]))
-
 (def app
   (wrap-defaults
    (optimus/wrap
     (make-handler (generate-routes))
-    get-assets
+    tmpl/get-assets
     optimizations/all
     serve-live-assets)
    (assoc site-defaults :static false)))
