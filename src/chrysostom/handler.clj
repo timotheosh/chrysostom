@@ -11,6 +11,10 @@
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.util.response :as res]))
 
+(defn not-found-handler
+  [request]
+  (web/layout-page request "<h1 style=\"color: red;\">Not Found</h1>"))
+
 "Liberator library makes things easier when we just need to send the
 content of arbitrary files. We just need it to send us a handler.
 TODO: Write my own macro in liberator's place. Unless, of course,
@@ -18,7 +22,8 @@ there are other things I can use from the lib."
 (defresource send-page [page]
   :allowed-methods [:get]
   :available-media-types ["text/html"]
-  :handle-ok page)
+  :handle-ok page
+  :handle-not-found not-found-handler)
 
 (defn index-handler
   [request]
@@ -39,7 +44,9 @@ there are other things I can use from the lib."
 
 (defn generate-routes
   []
-  ["/" (into app-routes (map #(gen-route %) (web/get-static-pages)))])
+  ["/" (conj
+        (into app-routes (map #(gen-route %) (web/get-static-pages)))
+        [true (send-page not-found-handler)])])
 
 (def app
   (wrap-defaults
