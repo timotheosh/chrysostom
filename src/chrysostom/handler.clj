@@ -33,10 +33,10 @@ there are other things I can use from the lib."
   [[""  (send-page index-handler)]])
 
 (defn- gen-route
-  [route]
   "Returns a route that bidi can use."
+  [route]
   [(let [path (first route)]
-     (if [(.startsWith path "/")]
+     (if (.startsWith path "/")
        (subs path 1)
        path))
    (let [page (second route)]
