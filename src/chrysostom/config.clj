@@ -7,3 +7,14 @@
   ([conf]
    (yaml/parse-string
     (slurp conf))))
+
+(defn get-file-path
+  "doctype will be one of
+          :public
+          or one of the defined types"
+  [doctype]
+  (let [conf (:documents (read-config))]
+    (or (get conf doctype)
+        (if (= doctype :public)
+          "resources/public"
+          (str "resources/" doctype)))))

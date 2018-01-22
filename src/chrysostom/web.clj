@@ -7,22 +7,11 @@
             [chrysostom.highlight :refer [highlight-code-blocks]]
             [chrysostom.config :as config]
             [me.raynes.cegdown :as md]
+            [net.cgrand.enlive-html :as html]
+            [optimus.assets :as assets]
             [chrysostom.templates :as tmpl]))
 
-(defn- get-file-path
-  "doctype will be one of
-     :public
-     :markdown
-     :org-files
-     :partials"
-  [doctype]
-  (let [conf (:documents (config/read-config))]
-    (or (get conf doctype)
-        (cond (= doctype :markdown) "resources/md"
-              (= doctype :org-files) "resources/org-files"
-              (= doctype :partials) "resources/partials"
-              (= doctype :public) "resources/public"
-              :else nil))))
+(def types [:pages :blog])
 
 (defn layout-page
   [request page]
@@ -39,12 +28,12 @@
 
 (defn partial-pages
   [pages]
-  (zipmap (keys pages)
+  (zipmap (map #(clojure.string/replace % #"\.html$" "") (keys pages))
           (map #(fn [req] (layout-page req %)) (vals pages))))
 
 (defn org-mode-pages
   [pages]
-  (zipmap (map #(clojure.string/replace % #"\.org$" ".html") (keys pages))
+  (zipmap (map #(clojure.string/replace % #"\.org$" "") (keys pages))
           (map #(fn [req] (layout-org-file req %)) (vals pages))))
 
 ;; Functions for handling markdown
@@ -60,25 +49,30 @@
                (vals pages))))
 ;; end: Markdown functions
 
-(defn get-partials []
+(defn get-partials [type]
   (partial-pages
-   (stasis/slurp-directory (get-file-path :partials) #".*\.html$")))
+   (stasis/slurp-directory (config/get-file-path type) #".*\.html$")))
 
-(defn get-org-files []
+(defn get-org-files [type]
   (org-mode-pages
-   (stasis/slurp-directory (get-file-path :org-files) #".*\.org$")))
+   (stasis/slurp-directory (config/get-file-path type) #".*\.org$")))
 
-(defn get-markdown-files []
+(defn get-markdown-files [type]
   (markdown-pages
-   (stasis/slurp-directory (get-file-path :markdown) #"\.md$")))
+   (stasis/slurp-directory (config/get-file-path type) #"\.md$")))
+
+(defn get-raw-types
+  [type]
+  (stasis/merge-page-sources
+   {(keyword (str "partial-" (name type))) (get-partials type)
+    (keyword (str "orgfiles-" (name type))) (get-org-files type)
+    (keyword (str "markdown-" (name type))) (get-markdown-files type)}))
 
 ;; For handling code highlighting
 (defn get-raw-pages []
   (stasis/merge-page-sources
-   {:public (stasis/slurp-directory (get-file-path :public) #".*\.(html|css|js)$")
-    :partials (get-partials)
-    :orgfiles (get-org-files)
-    :markdown (get-markdown-files)}))
+   {:public (stasis/slurp-directory (config/get-file-path :public) #".*\.(html|css|js)$")
+    :other (into {} (for [type types] (get-raw-types type)))}))
 
 (defn prepare-page [page req]
   (-> (if (string? page) page (page req))
