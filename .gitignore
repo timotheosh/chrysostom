@@ -2,9 +2,13 @@
 *~
 \#*
 .\#*
+.lsp/
 
 # Vi(m) artifacts
 *.swp
+
+# Intellij artifacts
+.idea/
 
 pygments-css
 
