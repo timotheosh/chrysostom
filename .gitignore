@@ -6,6 +6,7 @@
 # Vi(m) artifacts
 *.swp
 
+.lsp/
 pygments-css
 
 # Clojure/Java artifacts

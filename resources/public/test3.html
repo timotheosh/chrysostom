@@ -1,0 +1,52 @@
+<h1 id="this-is-the-outer-section">This is the outer section</h1>
+<h2 id="this-is-an-inner-section">This is an inner section</h2>
+<p>Inner section body -- <em>with italic text</em>! And <strong>bold text</strong> too.</p>
+<ul>
+<li>Plain List Item 1</li>
+<li>Plain List Item 2</li>
+</ul>
+<p><a href="http://eigenhombre.com">A link to a Web site</a></p>
+<p>Lisp code</p>
+<div class="sourceCode"><pre class="sourceCode commonlisp"><code class="sourceCode commonlisp">(<span class="kw">defparameter</span><span class="fu"> *foo* </span><span class="st">&quot;hello-world&quot;</span>)
+
+(<span class="kw">defun</span><span class="fu"> foo-func </span>(bar)
+    (<span class="kw">format</span> <span class="kw">t</span> <span class="st">&quot;Hello, ~A~%&quot;</span> bar))</code></pre></div>
+<p>C code</p>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c"><span class="ot">#include &lt;stdio.h&gt;</span>
+
+<span class="dt">int</span> main(<span class="dt">int</span> argc, <span class="dt">char</span> **argv) {
+    puts(<span class="st">&quot;Hello, World!&quot;</span>);
+    <span class="kw">return</span> <span class="dv">0</span>;
+}</code></pre></div>
+<p>Some Python</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">class</span> Foo:
+    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):
+        <span class="va">self</span>.var1 <span class="op">=</span> <span class="st">&quot;foo&quot;</span>
+
+    <span class="kw">def</span> run(<span class="va">self</span>):
+        <span class="bu">print</span>(<span class="st">&quot;{}&quot;</span>.<span class="bu">format</span>(<span class="va">self</span>.var1))
+
+<span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:
+    f <span class="op">=</span> Foo()
+    f.run()</code></pre></div>
+<p>Some shell</p>
+<pre class="shell"><code>for x in $(find /tmp -type f -print0|xargs -0 grep -i foobar);do
+    echo $x
+done
+</code></pre>
+<p>Some Clojure</p>
+<div class="sourceCode"><pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="kw">ns</span> ancillary.execution-handler
+    (<span class="kw">:require</span> [clojure.java.shell <span class="kw">:as</span> shell]
+              [clojure.data.json <span class="kw">:as</span> json]))
+
+(<span class="kw">defn</span><span class="fu"> exec-sh</span>
+    <span class="st">&quot;Executes and handles shell commands.&quot;</span>
+    [command]
+    (<span class="kw">let</span> [result (shell/sh <span class="st">&quot;bash&quot;</span> <span class="st">&quot;-c&quot;</span> command)]
+        (<span class="kw">cond</span> (<span class="kw">=</span> (<span class="kw">get</span> result <span class="kw">:exit</span>) <span class="dv">0</span>) (<span class="kw">def</span><span class="fu"> status </span><span class="dv">200</span>)
+              <span class="kw">:else</span> (<span class="kw">def</span><span class="fu"> status </span><span class="dv">510</span>))
+        {<span class="kw">:status</span> status
+         <span class="kw">:header</span> {<span class="st">&quot;Content-Type&quot;</span> <span class="st">&quot;application/json&quot;</span>}
+         <span class="kw">:body</span> (json/write-str
+              {<span class="kw">:stdout</span> (<span class="kw">get</span> result <span class="kw">:out</span>)
+               <span class="kw">:stderr</span> (<span class="kw">get</span> result <span class="kw">:err</span>)})}))</code></pre></div>

@@ -15,7 +15,7 @@
   (let [path (config/get-file-path type)]
     (map
      #(clojure.string/replace % path "")
-     (mapv str (filter #(.isFile %) (file-seq (clojure.java.io/file path)))))))
+     (mapv str (filter #(.isDirectory %) (file-seq (clojure.java.io/file path)))))))
 
 (defn remove-suffix
   [text]

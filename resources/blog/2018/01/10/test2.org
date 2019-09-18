@@ -1,4 +1,8 @@
 #+TITLE: This is an Org Mode file.
+#+DATE: <2018-01-10>
+#+AUTHOR: Tim Hawes
+#+EMAIL: tim@selfdidactic.com
+#+HTML_CONTAINER: div
 * This is the outer section
 ** This is an inner section
    Inner section body -- /with italic text/!  And *bold text* too.

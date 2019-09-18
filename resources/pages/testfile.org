@@ -1,20 +1,13 @@
 #+title: Test File
 #+author: Tim Hawes
 #+date: Jan 7, 2018
-* Testing with Organum
-** First Point
-   | Product  | Qty | Price  |
-   |----------+-----+--------|
-   | buttons  |   3 | $2.00  |
-   | textiles |  10 | $3.99  |
-   | stuff    |   5 | $19.99 |
 
-** Second Point
-   #+BEGIN_SRC python
-   import sys
+Some C
+#+BEGIN_SRC c
+    #include <stdio.h>
 
-   def some_function(data):
-       print(data)
-   #+END_SRC
-** Third Point
-   Yada yada yada.
+    int main(int argc, char **argv) {
+        puts("Hello, World!");
+        return 0;
+    }
+#+END_SRC

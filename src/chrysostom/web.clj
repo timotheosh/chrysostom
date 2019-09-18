@@ -1,17 +1,26 @@
 (ns chrysostom.web
-  (:require [optimus.link :as link]
+  (:require [chrysostom.highlight :refer [highlight-code-blocks]]
+            [chrysostom.config :as config]
+            [chrysostom.templates :as tmpl]
+            [optimus.link :as link]
+            [me.raynes.conch :refer [let-programs]]
             [clojure.java.io :as io]
             [stasis.core :as stasis]
             [hiccup.core :as hiccup]
-            [clj-org.org :refer [parse-org]]
-            [chrysostom.highlight :refer [highlight-code-blocks]]
-            [chrysostom.config :as config]
-            [me.raynes.cegdown :as md]
-            [net.cgrand.enlive-html :as html]
-            [optimus.assets :as assets]
-            [chrysostom.templates :as tmpl]))
+            [optimus.assets :as assets]))
 
 (def types [:pages :blog])
+
+(defn- pandoc-html
+  [from data]
+  (let-programs [pandoc "/usr/bin/pandoc"]
+    (str
+     "<div id=\"content\">"
+     (pandoc "-f" from
+             "-t" "html"
+             "--no-highlight"
+             "-" {:in data})
+     "</div>")))
 
 (defn layout-page
   [request page]
@@ -19,21 +28,25 @@
                         {:stylesheet (link/file-path request "/styles/main.css")
                          :text page})))
 
+(defn my-parse-org
+  [data]
+  (pandoc-html "org" data))
+
 (defn layout-org-file
   [request file]
   (clojure.string/join
    (tmpl/main-template
     {:text
-     (hiccup/html (:content (parse-org file)))})))
+     (my-parse-org file)})))
 
 (defn partial-pages
   [pages]
-  (zipmap (map #(clojure.string/replace % #"\.html$" "") (keys pages))
+  (zipmap (map #(clojure.string/replace % #"\.html$" ".html") (keys pages))
           (map #(fn [req] (layout-page req %)) (vals pages))))
 
 (defn org-mode-pages
   [pages]
-  (zipmap (map #(clojure.string/replace % #"\.org$" "") (keys pages))
+  (zipmap (map #(clojure.string/replace % #"\.org$" ".html") (keys pages))
           (map #(fn [req] (layout-org-file req %)) (vals pages))))
 
 ;; Functions for handling markdown
@@ -44,8 +57,8 @@
 ;;(layout-page (md/to-html page pegdown-options)))
 
 (defn markdown-pages [pages]
-  (zipmap (map #(clojure.string/replace % #"\.md$" "") (keys pages))
-          (map #(fn [req] (layout-page req (md/to-html % pegdown-options)))
+  (zipmap (map #(clojure.string/replace % #"\.md$" ".html") (keys pages))
+          (map #(fn [req] (layout-page req (pandoc-html "markdown" %)))
                (vals pages))))
 ;; end: Markdown functions
 
@@ -75,8 +88,8 @@
     :other (into {} (for [type types] (get-raw-types type)))}))
 
 (defn prepare-page [page req]
-  (-> (if (string? page) page (page req))
-      highlight-code-blocks))
+  (highlight-code-blocks
+   (if (string? page) page (page req))))
 
 (defn prepare-pages [pages]
   (zipmap (keys pages)

@@ -13,13 +13,22 @@
       :content))
 
 (defn- highlight [node]
-  (let [code (->> node :content (apply str))
-        lang (->> node :attrs :class keyword)]
-    (assoc node :content (-> code
-                             (pygments/highlight lang :html)
-                             extract-code))))
+  (let [code (->> (first (enlive/select node [:pre :code])) :content (apply str))
+        lang (->> (first (enlive/select node [:pre])) :attrs :class keyword)]
+    (cond
+      (= lang :example) (assoc node :content code)
+      (= lang :commonlisp) (assoc node :content (-> code
+                                                    (pygments/highlight :lisp :html)
+                                                    extract-code))
+      :else (assoc node :content (-> code
+                                     (pygments/highlight lang :html)
+                                     extract-code)))))
+
+(defn get-class
+  [node]
+  (:attr (:class node)))
 
 (defn highlight-code-blocks [page]
   (enlive/sniptest (clojure.string/join page)
-            [:pre :code] highlight
-            [:pre :code] #(assoc-in % [:attrs :class] "codehilite")))
+                   [:pre] highlight
+                   [:pre] #(assoc-in % [:attrs :class] "highlight")))

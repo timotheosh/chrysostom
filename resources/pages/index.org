@@ -1,0 +1,9 @@
+#+title: Welcome to Chrysostom
+#+author: Tim Hawes
+#+date: 2018-07-03
+* Welcome to Chrysostom!
+** Links
+   - [[file:some-code2.org][Some Code 2]]
+   - [[file:testfile.org][A Test File]]
+   - [[file:about.html][About]]
+   - [[file:mytest.html][My Test]]
